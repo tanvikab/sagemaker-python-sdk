@@ -88,7 +88,7 @@ with patch('sagemaker.jumpstart.cache.JumpStartModelsCache.get_specs') as mock_g
     mock_validate_model.return_value = JumpStartModelType.OPEN_WEIGHTS
     
     model_id = "meta-textgeneration-llama-2-7b-f"
-    model_version = "6.9.0"
+    model_version = "4.19.0"
     accept_eula = False
     
     # Create unique endpoint names with timestamp
@@ -104,7 +104,7 @@ with patch('sagemaker.jumpstart.cache.JumpStartModelsCache.get_specs') as mock_g
     model_neuron = JumpStartModel(
         model_id=model_id, 
         model_version=model_version,
-        config_name="neuron",
+        instance_type="ml.inf2.24xlarge",
         env={"HUGGING_FACE_HUB_TOKEN": "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"}
     )
 
@@ -113,6 +113,9 @@ with patch('sagemaker.jumpstart.cache.JumpStartModelsCache.get_specs') as mock_g
     # Replace with alpha us-west-2 bucket (handle both east-1 and west-2 original buckets)
     alpha_neuron_uri = original_neuron_uri.replace('jumpstart-private-cache-prod-us-east-1', 'jumpstart-private-cache-alpha-us-west-2')
     alpha_neuron_uri = alpha_neuron_uri.replace('jumpstart-private-cache-prod-us-west-2', 'jumpstart-private-cache-alpha-us-west-2')
+    # Also handle regular cache buckets (without "private")
+    alpha_neuron_uri = alpha_neuron_uri.replace('jumpstart-cache-prod-us-east-1', 'jumpstart-cache-alpha-us-west-2')
+    alpha_neuron_uri = alpha_neuron_uri.replace('jumpstart-cache-prod-us-west-2', 'jumpstart-cache-alpha-us-west-2')
     model_neuron.model_data['S3DataSource']['S3Uri'] = alpha_neuron_uri
     print(f"Original neuron URI: {original_neuron_uri}")
     print(f"Alpha neuron URI: {alpha_neuron_uri}")
@@ -137,7 +140,7 @@ with patch('sagemaker.jumpstart.cache.JumpStartModelsCache.get_specs') as mock_g
     model_gpu = JumpStartModel(
         model_id=model_id, 
         model_version=model_version, 
-        config_name="tgi",
+        instance_type="ml.g5.12xlarge",
         env={"HUGGING_FACE_HUB_TOKEN": "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"}
     )
 
@@ -146,6 +149,9 @@ with patch('sagemaker.jumpstart.cache.JumpStartModelsCache.get_specs') as mock_g
     # Replace with alpha us-west-2 bucket (handle both east-1 and west-2 original buckets)
     alpha_gpu_uri = original_gpu_uri.replace('jumpstart-private-cache-prod-us-east-1', 'jumpstart-private-cache-alpha-us-west-2')
     alpha_gpu_uri = alpha_gpu_uri.replace('jumpstart-private-cache-prod-us-west-2', 'jumpstart-private-cache-alpha-us-west-2')
+    # Also handle regular cache buckets (without "private")
+    alpha_gpu_uri = alpha_gpu_uri.replace('jumpstart-cache-prod-us-east-1', 'jumpstart-cache-alpha-us-west-2')
+    alpha_gpu_uri = alpha_gpu_uri.replace('jumpstart-cache-prod-us-west-2', 'jumpstart-cache-alpha-us-west-2')
     model_gpu.model_data['S3DataSource']['S3Uri'] = alpha_gpu_uri
     print(f"Original GPU URI: {original_gpu_uri}")
     print(f"Alpha GPU URI: {alpha_gpu_uri}")
